@@ -7,7 +7,7 @@ from reporting_system.models import CorrectionReport
 class CorrectionReportForm(ModelForm):
     class Meta:
         model = CorrectionReport
-        fields = ('title', 'description', 'file_name', 'course', 'report_type', 'file')
+        fields = ('title', 'description', 'file_name', 'course', 'report_type', 'file', 'created_by')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control my-1', 'placeholder': 'Korrekturmeldung'}),

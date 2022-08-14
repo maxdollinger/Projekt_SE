@@ -2,10 +2,8 @@ from datetime import datetime
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-
-def report_creation_date():
-    return datetime.now().strftime("%Y-%m-%d")
+from  django.contrib.auth.models import User
+from django.conf import settings
 
 
 class CorrectionReport(models.Model):
@@ -24,12 +22,12 @@ class CorrectionReport(models.Model):
 
     title = models.CharField("Bezeichnung", max_length=255, blank=False)
     description = models.TextField("Beschreibung", blank=False)
-    # created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    # assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    # qm_manager = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True)
+    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name="assignee")
+    qm_manager = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name="qm_manager")
     created_at = models.DateTimeField(auto_now_add=True)
-    assigned_at = models.DateField(default=None, blank=True, null=True)
-    edited_at = models.DateField(auto_now=True)
+    assigned_at = models.DateTimeField(default=None, blank=True, null=True)
+    edited_at = models.DateTimeField(auto_now=True)
     file_name = models.CharField("Dateiname", max_length=255, blank=False)
     file = models.FileField("Datei", upload_to='%Y/%m/%d', blank=False)
     course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False)

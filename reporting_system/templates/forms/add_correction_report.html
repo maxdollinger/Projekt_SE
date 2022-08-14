@@ -4,15 +4,8 @@
     {{ page_title }}
 {% endblock %}
 
-{% block header %}
-    {{ header }}
-{% endblock %}
-
-{% block subheader %}
-    {{ subheader }}
-{% endblock %}
-
 {% block body %}
+
     {% if show_message %}
         <div class="alert alert-{{ alert }} my-3">
             {{ message }}
@@ -20,6 +13,7 @@
     {% endif %}
 
     <div class="row">
+        <h1 class="display-4 mt-5 text-center">Neue Korrekturmeldung erstellen</h1>
         <div class="col form-group">
             <form action="{% url 'add_correction_report' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
