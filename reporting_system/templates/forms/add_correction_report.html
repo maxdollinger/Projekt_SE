@@ -1,0 +1,63 @@
+{% extends "cms/base.html" %}
+
+{% block title %}
+    {{ page_title }}
+{% endblock %}
+
+{% block header %}
+    {{ header }}
+{% endblock %}
+
+{% block subheader %}
+    {{ subheader }}
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col form-group">
+            <form action="{% url 'add_correction_report' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+                <div class="row my-5">
+                    <div class="my-1">
+                        {{ form.title.label }}
+                        {{ form.title }}
+                    </div>
+                    <div class="my-1">
+                        {{ form.description.label }}
+                        {{ form.description }}
+                    </div>
+                    <div class="my-1">
+                        {{ form.course.label }}
+                        {{ form.course }}
+                    </div>
+                </div>
+
+                <div class="row my-5">
+                    <div class="row">
+                        <div class="col-6 my-1">
+                            {{ form.report_type.label }}
+                            {{ form.report_type }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row my-5">
+                    <p class="my-2"><strong>Dokumente</strong></p>
+                    <div class="row">
+                        <div class="col-6 my-1">
+                            {{ document_form.file_name.label }}
+                            {{ document_form.file_name }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 my-1">
+                            {{ document_form.pdf.label }}
+                            {{ document_form.pdf }}
+                        </div>
+                    </div>
+                </div>
+                <input type="submit" value="Create" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
+{% endblock %}
