@@ -26,7 +26,9 @@ Korrekturmanagmentsystem
                 {{form.password}}
                 <label class="form-label" for="typePasswordX">Password</label>
               </div>
-
+              {% if form.errors %}
+              <p>Your username and password didn't match. Please try again.</p>
+              {% endif %}
               <button class="btn btn-outline-light btn-lg px-5" type="submit" value="Login">Login</button>
 
           </div>

@@ -9,5 +9,5 @@ def team(request):
     return render(request, 'cms/team.html')
 
 @login_required
-def manage_reportings(request):
-    return render(request, "manage_reports.html")
+def overview(request):
+    return render(request, "overview.html")

@@ -13,3 +13,6 @@
     </div>
   </div>
 </nav>
+{% if user.is_authenticated %}
+<p> Hello {{user.username}} </p>
+{% endif %}

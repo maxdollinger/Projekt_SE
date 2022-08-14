@@ -7,6 +7,6 @@ urlpatterns = [
     path("", auth_views.LoginView.as_view(
         template_name="index.html",
         authentication_form=CustomLoginForm), name="Login"),
-    path("manage", views.manage_reportings, name="Manage_reportings"),
-    path("team", views.team, name="team")
+    path("overview", views.overview, name="Overview"),
+    path("team", views.team, name="Team")
 ]
