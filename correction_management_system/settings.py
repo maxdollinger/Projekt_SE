@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-7c((mbf@8e%*c7+u0@7#%y)3_j3qy!5jdvyt9plf@f4t7c0w#r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -129,6 +129,8 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = "/overview"
 
 MEDIA_URL = '/report_files/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'report_files')
