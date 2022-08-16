@@ -3,12 +3,9 @@ from reporting_system.forms.correction_report_form import CorrectionReportForm
 from reporting_system.models.correction_report import CorrectionReport
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
-
-def index(request):
-    return render(request, 'cms/index.html')
-
-
+@login_required
 def add_correction_report(request):
     if request.method == 'POST':
         form = CorrectionReportForm(request.POST, request.FILES)
@@ -51,5 +48,8 @@ def team(request):
 
 
 @login_required
-def overview(request):
-    return render(request, "overview.html")
+def reports_view(request):
+    ctx = {
+        'reports': CorrectionReport.objects.filter(created_by=request.user),
+    }
+    return render(request, "reports.html", ctx)

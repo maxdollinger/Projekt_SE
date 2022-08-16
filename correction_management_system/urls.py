@@ -21,7 +21,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', include("reporting_system.urls")),
-    path('report/', views.index, name="index"),
     path('admin/', admin.site.urls),
 ]
 

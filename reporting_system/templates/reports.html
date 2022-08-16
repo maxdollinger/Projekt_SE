@@ -1,0 +1,36 @@
+{% extends 'cms/base.html' %}
+{% load static %}
+
+{% block title %}
+Übersicht Meldungen
+{% endblock %}
+
+
+{% block body %}
+{% if reports|length == 0 %}
+<div class="alert alert-info" role="alert">
+    Keine Meldungen vorhanden.
+</div>
+{% else %}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Erstellt am</th>
+            <th scope="col">Status</th>
+            <th scope="col">Kurs</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for report in reports %}
+        <tr>
+            <th scope="row">{{report.title}}</th>
+            <td>{{report.created_at}}</td>
+            <td>{{report.status}}</td>
+            <td>{{report.course}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

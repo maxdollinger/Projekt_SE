@@ -18,19 +18,22 @@
             <div class="card-body p-5 text-center">
               <form method="post">
                 {% csrf_token %}
-                <p class="text-white-50 mb-5">Please enter your username and password!</p>
+                <h3>Korrekturmanagement</h3>
+                <p class="text-white-50 mb-5">Bitte gebe deinen Nutzernamen und Passwort ein</p>
   
                 <div class="form-outline form-white mb-4">
                   {{form.username}}
-                  <label class="form-label" for="typeEmailX">Username</label>
+                  <label class="form-label" for="typeEmailX">Nutzername</label>
                 </div>
   
                 <div class="form-outline form-white mb-4">
                   {{form.password}}
-                  <label class="form-label" for="typePasswordX">Password</label>
+                  <label class="form-label" for="typePasswordX">Passwort</label>
                 </div>
                 {% if form.errors %}
-                <p>Your username and password didn't match. Please try again.</p>
+                <div class="alert alert-danger" role="alert">
+                  Nutzername oder Passwort falsch.
+                </div>
                 {% endif %}
                 <button class="btn btn-outline-light btn-lg px-5" type="submit" value="Login">Login</button>
   

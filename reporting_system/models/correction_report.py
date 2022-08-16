@@ -1,10 +1,6 @@
-from datetime import datetime
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from  django.contrib.auth.models import User
 from django.conf import settings
-
 
 class CorrectionReport(models.Model):
     class ReportType(models.TextChoices):
@@ -28,8 +24,8 @@ class CorrectionReport(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     assigned_at = models.DateTimeField(default=None, blank=True, null=True)
     edited_at = models.DateTimeField(auto_now=True)
-    file_name = models.CharField("Dateiname", max_length=255, blank=False)
-    file = models.FileField("Datei", upload_to='%Y/%m/%d', blank=False)
+    file_name = models.CharField("Dateiname", max_length=255, blank=True, null=True)
+    file = models.FileField("Datei", upload_to='%Y/%m/%d', blank=True, null=True)
     course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False)
     report_status = models.CharField("Status der Korrekturmeldung", max_length=2, choices=ReportStatus.choices, default=ReportStatus.REPORTED, null=True)
     report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.INFO, null=True)
