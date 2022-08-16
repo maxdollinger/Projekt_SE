@@ -131,3 +131,5 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = "/overview"
+MEDIA_URL = '/report_files/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'report_files')
