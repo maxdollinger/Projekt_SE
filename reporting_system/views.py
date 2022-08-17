@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from reporting_system.forms.correction_report_form import CorrectionReportForm
-from reporting_system.models.correction_report import CorrectionReport
+from .models import CorrectionReport
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
+from django.contrib.auth import get_user
 
-@login_required
+
 def add_correction_report(request):
     if request.method == 'POST':
         form = CorrectionReportForm(request.POST, request.FILES)
@@ -28,7 +28,7 @@ def add_correction_report(request):
                 'message': 'Deine Korrekturmeldung wurde erfolgreich angelegt!'
             })
         else:
-            return render(request, 'forms/add_correction_report.html', {
+            return render(request, 'add_correction_report.html', {
                 'page_title': 'Neue Korrekturmeldung',
                 'form': CorrectionReportForm(),
                 'show_message': True,
@@ -36,20 +36,41 @@ def add_correction_report(request):
                 'message': 'Leider konnte deine Korrekturmeldung nicht erfolgreich angelegt werden'
             })
     else:
-        return render(request, 'forms/add_correction_report.html', {
+        return render(request, 'report_add.html', {
             'page_title': 'Neue Korrekturmeldung',
             'form': CorrectionReportForm(),
             'show_message': False,
         })
 
 
-def team(request):
-    return render(request, 'cms/team.html')
+def reports_all_view(request):
+    status_filter = request.GET.get('status_filter', 'open')
 
-
-@login_required
-def reports_view(request):
     ctx = {
-        'reports': CorrectionReport.objects.filter(created_by=request.user),
+        'reports': get_reports_role_based(request.user, request.role, status_filter),
     }
     return render(request, "reports.html", ctx)
+
+
+def reports_detail_view(request, id):
+    report = CorrectionReport.objects.get(id=id)
+
+    ctx = {
+        'report': report,
+    }
+    return render(request, "reports_detail.html", ctx)
+
+
+
+def get_reports_role_based(user, role, filter):
+    filters = {
+        'open': [1, 2, 3],
+        'all': [1, 2, 3, 4, 5],
+    }
+
+    if role == 'Student':
+        return CorrectionReport.objects.filter(created_by=user, report_status__in=filters[filter]).order_by('-edited_at')
+    if role == 'Mitarbeiter IU':
+        return CorrectionReport.objects.filter(assigned_to=user, report_status__in=filters[filter]).order_by('-edited_at')
+    if role == 'Leiter QM' or role == 'Mitarbeiter QM':
+        return CorrectionReport.objects.filter(report_status__in=filters[filter]).order_by('-created_at')

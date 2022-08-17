@@ -1,4 +1,4 @@
-{% extends 'cms/base.html' %}
+{% extends 'base/base.html' %}
 {% load static %}
 
 {% block title %}
@@ -7,30 +7,44 @@
 
 
 {% block body %}
+<div class="dropdown mb-3 d-flex justify-content-end">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Filter
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{{ request.path }}?status_filter=open">Nur offene Meldungen</a></li>
+        <li><a class="dropdown-item" href="{{ request.path }}?status_filter=all">Alle Meldungen</a></li>
+    </ul>
+</div>
 {% if reports|length == 0 %}
 <div class="alert alert-info" role="alert">
     Keine Meldungen vorhanden.
 </div>
 {% else %}
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Erstellt am</th>
-            <th scope="col">Status</th>
-            <th scope="col">Kurs</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for report in reports %}
-        <tr>
-            <th scope="row">{{report.title}}</th>
-            <td>{{report.created_at}}</td>
-            <td>{{report.status}}</td>
-            <td>{{report.course}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<ul class="list-group">
+    {% for report in reports %}
+    <li class="list-group-item">
+        <a href="{% url 'reports_detail' report.id %}" class="navbar-text" style="text-decoration: none ;">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <h5>{{report.title}}</h5>
+                    </div>
+                </div>
+                <div class="row ms-3">
+                    <div class="col">
+                        <ul class="list-inline">
+                            <li class="list-inline-item"> <i>Kurs</i> {{report.course}}.</li>
+                            <li class="list-inline-item"> <i>Erstellt am</i> {{report.created_at|date:"d.m.Y"}}</li>
+                            <li class="list-inline-item"> <i>Status</i> {{report.get_report_status_display}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+
 {% endif %}
 {% endblock %}

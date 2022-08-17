@@ -19,16 +19,13 @@
               <form method="post">
                 {% csrf_token %}
                 <h3>Korrekturmanagement</h3>
-                <p class="text-white-50 mb-5">Bitte gebe deinen Nutzernamen und Passwort ein</p>
   
                 <div class="form-outline form-white mb-4">
                   {{form.username}}
-                  <label class="form-label" for="typeEmailX">Nutzername</label>
                 </div>
   
                 <div class="form-outline form-white mb-4">
                   {{form.password}}
-                  <label class="form-label" for="typePasswordX">Passwort</label>
                 </div>
                 {% if form.errors %}
                 <div class="alert alert-danger" role="alert">

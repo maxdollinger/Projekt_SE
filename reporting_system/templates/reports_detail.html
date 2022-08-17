@@ -1,0 +1,110 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+Übersicht Meldungen
+{% endblock %}
+
+
+{% block body %}
+<a class="navbar-text" href="{% url 'reports' %}">Zurück</a>
+<div class="card mx-auto d-flex">
+    <div class="card-body">
+        <h5 class="card-title text-center">{{ report.title }}</h5>
+
+        <div class="container">
+            <div class="row">
+                <div class="col text-end">
+                    <b>Kurs</b>
+                </div>
+                <div class="col">
+                    {{ report.course}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-end">
+                    <b>Erstellt am</b>
+                </div>
+                <div class="col">
+                    {{ report.created_at|date:"d.m.Y"}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-end">
+                    <b>Status</b>
+                </div>
+                <div class="col">
+                    {{ report.get_report_status_display}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-end">
+                    <b>Wird bearbeitet von</b>
+                </div>
+                <div class="col">
+                    {{ report.assigned_to}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-end">
+                    <b>Zuletzt geändert am</b>
+                </div>
+                <div class="col">
+                    {{ report.edited_at|date:"d.m.Y"}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-end">
+                    <b>Art der Meldung</b>
+                </div>
+                <div class="col">
+                    {{ report.get_report_type_display}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-end">
+                    <b>Zugewiesener Mitarbeiter</b>
+                </div>
+                <div class="col">
+                    {{ report.assigned_to}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-end">
+                    <b>Zugewiesener QM Mitarbeiter</b>
+                </div>
+                <div class="col">
+                    {{ report.qm_manager}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-end">
+                    <b>Zugewiesen am</b>
+                </div>
+                <div class="col">
+                    {{ report.assigned_at|date:"d.m.Y"}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-end">
+                    <b>Beschreibung</b>
+                </div>
+                <div class="col">
+                    {{ report.description}}
+                </div>
+            </div>
+            {% if report.file_name %}
+            <div class="row">
+                <div class="col text-end">
+                    <b>Datei</b>
+                </div>
+                <div class="col">
+                    <a href="{{ report.file.url }}" download>{{ report.file_name }}</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
