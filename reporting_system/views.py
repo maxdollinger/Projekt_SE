@@ -80,14 +80,12 @@ def get_reports_role_based(user, role, filter):
 def edit_correction_report(request, id):
     if request.method == "POST":
         form = CorrectionReportForm(request.POST, request.FILES)
-        print(form)
+        if 'file' in request.FILES:
+            file = request.FILES['file']
+        else:
+            file = CorrectionReport.objects.get(id=id).file
 
-        if form.is_valid:
-            if 'file' in request.FILES:
-                file = request.FILES['file']
-            else:
-                file = CorrectionReport.objects.get(id=id).file
-
+        if form.is_valid():
             CorrectionReport.objects.filter(id=id).update(
                 title=form.cleaned_data['title'],
                 description=form.cleaned_data['description'],
