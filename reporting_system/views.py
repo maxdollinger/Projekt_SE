@@ -80,18 +80,24 @@ def get_reports_role_based(user, role, filter):
 def edit_correction_report(request, id):
     if request.method == "POST":
         form = CorrectionReportForm(request.POST, request.FILES)
-        correction_report = CorrectionReport()
+        print(form)
 
-        if form.is_valid():
-            correction_report.title = form.cleaned_data['title']
-            correction_report.description = form.cleaned_data['description']
-            correction_report.created_by = request.user
-            correction_report.file_name = form.cleaned_data['file_name']
-            correction_report.file = request.FILES['file']
-            correction_report.course = form.cleaned_data['course']
-            correction_report.report_type = form.cleaned_data['report_type']
-            correction_report.save()
-            return redirect(reports_detail_view, request=request, id=id)
+        if form.is_valid:
+            if 'file' in request.FILES:
+                file = request.FILES['file']
+            else:
+                file = CorrectionReport.objects.get(id=id).file
+
+            CorrectionReport.objects.filter(id=id).update(
+                title=form.cleaned_data['title'],
+                description=form.cleaned_data['description'],
+                course=form.cleaned_data['course'],
+                report_type=form.cleaned_data['report_type'],
+                file_name=form.cleaned_data['file_name'],
+                file=file,
+                is_edited=True
+            )
+            return redirect(reports_detail_view, id=id)
         else:
             return render(request, 'report_edit.html', {
                 'page_title': 'Korrekturmeldung bearbeiten',
@@ -107,6 +113,6 @@ def edit_correction_report(request, id):
         return render(request, 'report_edit.html', {
             'page_title': 'Korrekturmeldung bearbeiten',
             'form': CorrectionReportForm(instance=report),
-            'report_id': id,
+            'report': report,
             'show_message': False,
         })
