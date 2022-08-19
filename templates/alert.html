@@ -17,9 +17,19 @@
         <div class="m-auto">
             <h2 class="text-center">{{ code }}</h2>
             <p>{{ message }}</p>
+            {% if redirect == True %}
+            <p class="text-center"> Du wirst in 5s weitergeleitet</p>
+            {% endif %}
         </div>
     </div>
 
 </body>
 
+{% if redirect == True %}
+<script>
+    setTimeout(function () {
+        window.location.href = "{{ redirect_url }}";
+    }, 5000);
+</script>
+{% endif %}
 </html>

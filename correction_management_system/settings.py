@@ -93,7 +93,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'correction_management_system.validators.MinMaxLengthValidator',
         "OPTIONS": {
             "min_length": 8,
             "max_length": 255
@@ -124,9 +124,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATIC_ROOT = 'static'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "reporting_system/static"),
 ]
@@ -136,7 +134,10 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SESSION_COOKIE_AGE = 90 * 60
+# auto logout after 15min
+SESSION_COOKIE_AGE = 15 * 60
+SESSION_SAVE_EVERY_REQUEST = True
+
 LOGIN_REDIRECT_URL = "/reports/reports"
 LOGOUT_REDIRECT_URL = "/"
 

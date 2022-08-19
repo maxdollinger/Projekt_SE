@@ -21,7 +21,9 @@ class LoginRequiredMiddleware:
             ctx = {
                 'type': 'danger',
                 'code': '401',
-                'message': 'Bitte melde dich an, um diese Seite zu sehen.',
+                'message': 'Bitte melde dich an, um diese Seite zu sehen.', 
+                'redirect': True,
+                'redirect_url': '/'
             }
             return render(request, 'alert.html', ctx)	
         else:
