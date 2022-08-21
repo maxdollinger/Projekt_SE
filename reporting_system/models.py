@@ -27,4 +27,4 @@ class CorrectionReport(models.Model):
     file = models.FileField("Datei", upload_to='%Y/%m/%d', blank=True, null=True)
     course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False)
     report_status = models.CharField("Status der Korrekturmeldung", max_length=2, choices=ReportStatus.choices, default=ReportStatus.REPORTED, null=True)
-    report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.INFO, null=True)
+    report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.CORRECTION, null=True)
