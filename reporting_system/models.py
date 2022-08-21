@@ -4,10 +4,9 @@ from django.conf import settings
 
 class CorrectionReport(models.Model):
     class ReportType(models.TextChoices):
-        INFO = 1, _('Hinweis')
-        WARN = 2, _('Warnung')
-        ERROR = 3, _('Error')
-        FATAL = 4, _('Fatal')
+        MISTAKE = 1, _('Fehler')
+        CORRECTION = 2, _('Verbesserung')
+        MISSPELLING = 3, _('Rechtschreibfehler')
 
     class ReportStatus(models.TextChoices):
         REPORTED = 1, _('Gemeldet')
