@@ -5,9 +5,9 @@ from django.conf import settings
 
 class CorrectionReport(models.Model):
     class ReportType(models.TextChoices):
-        ERROR = 1, _('Fehler')
-        IMPROVEMENT = 2, _('Verbesserung')
-        SPELLING_MISTAKE = 3, _('Rechtschreibfehler')
+        MISTAKE = 1, _('Fehler')
+        CORRECTION = 2, _('Verbesserung')
+        MISSPELLING = 3, _('Rechtschreibfehler')
 
     class ReportStatus(models.TextChoices):
         REPORTED = 1, _('Erstellt')
@@ -30,4 +30,4 @@ class CorrectionReport(models.Model):
     file = models.FileField("Datei", upload_to='%Y/%m/%d', blank=True, null=True)
     course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False)
     report_status = models.CharField("Status der Korrekturmeldung", max_length=2, choices=ReportStatus.choices, default=ReportStatus.REPORTED, null=True)
-    report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.ERROR, null=True)
+    report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.CORRECTION, null=True)
