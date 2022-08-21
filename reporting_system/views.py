@@ -11,16 +11,40 @@ def add_correction_report(request):
         form = CorrectionReportForm(request.POST, request.FILES)
         correction_report = CorrectionReport()
 
+        if 'file' in request.FILES:
+            file = request.FILES['file']
+        else:
+            file = None
+
         if form.is_valid():
+            if 'file' in request.FILES and form.cleaned_data['file_name'] is None:
+                return render(request, 'report_add.html', {
+                    'page_title': 'Neue Korrekturmeldung',
+                    'form': CorrectionReportForm(),
+                    'show_message': True,
+                    'alert': 'danger',
+                    'message': 'Bitte lege einen Dateinamen fest, wenn du eine Datei an die Korrekturmeldung'
+                               ' anhängst!'
+                })
+
+            if form.cleaned_data['file_name'] is not None and 'file' not in request.FILES:
+                return render(request, 'report_add.html', {
+                    'page_title': 'Neue Korrekturmeldung',
+                    'form': CorrectionReportForm(),
+                    'show_message': True,
+                    'alert': 'danger',
+                    'message': 'Bitte hänge eine Datei an, wenn du einen Dateinamen festlegst!'
+                })
+
             correction_report.title = form.cleaned_data['title']
             correction_report.description = form.cleaned_data['description']
             correction_report.created_by = request.user
             correction_report.file_name = form.cleaned_data['file_name']
-            correction_report.file = request.FILES['file']
+            correction_report.file = file
             correction_report.course = form.cleaned_data['course']
             correction_report.report_type = form.cleaned_data['report_type']
-            correction_report.save()
-            return render(request, 'forms/add_correction_report.html', {
+            #correction_report.save()
+            return render(request, 'report_add.html', {
                 'page_title': 'Neue Korrekturmeldung',
                 'form': CorrectionReportForm(),
                 'show_message': True,
@@ -28,7 +52,7 @@ def add_correction_report(request):
                 'message': 'Deine Korrekturmeldung wurde erfolgreich angelegt!'
             })
         else:
-            return render(request, 'add_correction_report.html', {
+            return render(request, 'report_add.html', {
                 'page_title': 'Neue Korrekturmeldung',
                 'form': CorrectionReportForm(),
                 'show_message': True,
@@ -61,7 +85,6 @@ def reports_detail_view(request, id):
     return render(request, "reports_detail.html", ctx)
 
 
-
 def get_reports_role_based(user, role, filter):
     filters = {
         'open': [1, 2, 3],
@@ -69,8 +92,10 @@ def get_reports_role_based(user, role, filter):
     }
 
     if role == 'Student':
-        return CorrectionReport.objects.filter(created_by=user, report_status__in=filters[filter]).order_by('-edited_at')
+        return CorrectionReport.objects.filter(created_by=user, report_status__in=filters[filter]).order_by(
+            '-edited_at')
     if role == 'Mitarbeiter IU':
-        return CorrectionReport.objects.filter(assigned_to=user, report_status__in=filters[filter]).order_by('-edited_at')
+        return CorrectionReport.objects.filter(assigned_to=user, report_status__in=filters[filter]).order_by(
+            '-edited_at')
     if role == 'Leiter QM' or role == 'Mitarbeiter QM':
         return CorrectionReport.objects.filter(report_status__in=filters[filter]).order_by('-created_at')

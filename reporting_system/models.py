@@ -2,19 +2,21 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
+
 class CorrectionReport(models.Model):
     class ReportType(models.TextChoices):
-        INFO = 1, _('Hinweis')
-        WARN = 2, _('Warnung')
-        ERROR = 3, _('Error')
-        FATAL = 4, _('Fatal')
+        ERROR = 1, _('Fehler')
+        IMPROVEMENT = 2, _('Verbesserung')
+        SPELLING_MISTAKE = 3, _('Rechtschreibfehler')
 
     class ReportStatus(models.TextChoices):
-        REPORTED = 1, _('Gemeldet')
+        REPORTED = 1, _('Erstellt')
         ASSIGNED = 2, _('Zugewiesen')
-        IN_PROCESS = 3, _('In Bearbeitung')
-        PROCESSED = 4, _('Bearbeitet')
-        REJECTED = 5, _('Abgewiesen')
+        REJECTED = 3, _('Abgelehnt')
+        IN_PROCESS = 4, _('In Bearbeitung')
+        WAIT_FOR_FEEDBACK = 5, _('Warten auf Rückmeldung')
+        COMPLETED = 6, _('Abgeschlossen')
+        CHECKED = 7, _('Geprüft')
 
     title = models.CharField("Bezeichnung", max_length=255, blank=False)
     description = models.TextField("Beschreibung", blank=False)
@@ -28,4 +30,4 @@ class CorrectionReport(models.Model):
     file = models.FileField("Datei", upload_to='%Y/%m/%d', blank=True, null=True)
     course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False)
     report_status = models.CharField("Status der Korrekturmeldung", max_length=2, choices=ReportStatus.choices, default=ReportStatus.REPORTED, null=True)
-    report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.INFO, null=True)
+    report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.ERROR, null=True)

@@ -143,3 +143,5 @@ LOGOUT_REDIRECT_URL = "/"
 
 MEDIA_URL = '/report_files/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'report_files')
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10_455_040
