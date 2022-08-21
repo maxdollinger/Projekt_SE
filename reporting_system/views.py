@@ -20,7 +20,7 @@ def add_correction_report(request):
             correction_report.course = form.cleaned_data['course']
             correction_report.report_type = form.cleaned_data['report_type']
             correction_report.save()
-            return render(request, 'forms/add_correction_report.html', {
+            return render(request, 'report_add.html', {
                 'page_title': 'Neue Korrekturmeldung',
                 'form': CorrectionReportForm(),
                 'show_message': True,
@@ -28,7 +28,7 @@ def add_correction_report(request):
                 'message': 'Deine Korrekturmeldung wurde erfolgreich angelegt!'
             })
         else:
-            return render(request, 'add_correction_report.html', {
+            return render(request, 'report_add.html', {
                 'page_title': 'Neue Korrekturmeldung',
                 'form': CorrectionReportForm(),
                 'show_message': True,
@@ -58,7 +58,7 @@ def reports_detail_view(request, id):
     ctx = {
         'report': report,
     }
-    return render(request, "reports_detail.html", ctx)
+    return render(request, "report_detail.html", ctx)
 
 
 
