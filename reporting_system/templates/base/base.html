@@ -16,7 +16,18 @@
 
     <!-- Main content -->
     <div class="container mt-3">
-        {% block body %}{% endblock %}
+        {% if messages %}
+        <div class="my-3">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }} my-3 d-flex justify-content-between">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block body %}{% endblock %}
     </div>
 
     <!-- Page Footer -->

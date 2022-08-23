@@ -93,14 +93,16 @@
                     {{ report.description}}
                 </div>
             </div>
-            {% if report.file_name %}
+            {% if report.file_name  %}
             <div class="row">
+                {% if report.file  %}
                 <div class="col text-end">
                     <b>Datei</b>
                 </div>
                 <div class="col">
                     <a href="{{ report.file.url }}" download>{{ report.file_name }}</a>
                 </div>
+                {% endif %}
             </div>
             {% endif %}
             <div class="d-flex justify-content-center mt-3">
