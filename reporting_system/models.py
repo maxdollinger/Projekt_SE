@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.core.validators import MinLengthValidator
 
 
 class CorrectionReport(models.Model):
@@ -18,7 +19,10 @@ class CorrectionReport(models.Model):
         COMPLETED = 6, _('Abgeschlossen')
         CHECKED = 7, _('Geprüft')
 
-    title = models.CharField("Bezeichnung", max_length=255, blank=False)
+    title = models.CharField("Bezeichnung", max_length=254, blank=False, error_messages={
+        'required': 'Bitte vergebe für deine Korrekturmeldung eine Bezeichnung.',
+        'max_length': 'Die Bezeichnung darf maximal 254 Zeichen lang sein.'
+    }, validators=[MinLengthValidator(10, message='Die Bezeichnung muss mindestens 10 Zeichen lang sein')])
     description = models.TextField("Beschreibung", blank=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True)
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name="assignee")
@@ -26,8 +30,12 @@ class CorrectionReport(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     assigned_at = models.DateTimeField(default=None, blank=True, null=True)
     edited_at = models.DateTimeField(auto_now=True)
-    file_name = models.CharField("Dateiname", max_length=255, blank=True, null=True)
+    file_name = models.CharField("Dateiname", max_length=255, blank=True, null=True, error_messages={
+        'max_length': 'Der Dateiname darf maximal 255 Zeichen lang sein.'
+    })
     file = models.FileField("Datei", upload_to='%Y/%m/%d', blank=True, null=True)
-    course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False)
+    course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False, error_messages={
+        'max_length': 'Die IU Kursbezeichnung darf maximal 255 Zeichen lang sein.'
+    })
     report_status = models.CharField("Status der Korrekturmeldung", max_length=2, choices=ReportStatus.choices, default=ReportStatus.REPORTED, null=True)
     report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.CORRECTION, null=True)
