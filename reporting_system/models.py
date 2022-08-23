@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
+
 class CorrectionReport(models.Model):
     class ReportType(models.TextChoices):
         MISTAKE = 1, _('Fehler')
@@ -23,6 +24,7 @@ class CorrectionReport(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     assigned_at = models.DateTimeField(default=None, blank=True, null=True)
     edited_at = models.DateTimeField(auto_now=True)
+    is_edited = models.BooleanField(default=False, blank=True, null=True)
     file_name = models.CharField("Dateiname", max_length=255, blank=True, null=True)
     file = models.FileField("Datei", upload_to='%Y/%m/%d', blank=True, null=True)
     course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False)
