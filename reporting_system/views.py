@@ -1,9 +1,12 @@
+import datetime
+
 from django.shortcuts import render, redirect
 from reporting_system.forms.correction_report_form import CorrectionReportForm
 from .models import CorrectionReport
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth import get_user
+from django.contrib.auth.models import User
 from django.contrib import messages
 
 
@@ -75,8 +78,15 @@ def reports_all_view(request):
 def reports_detail_view(request, id):
     report = CorrectionReport.objects.get(id=id)
 
+    users = {}
+    for user in User.objects.all():
+        role = get_user_role(user)
+        if role is 'Mitarbeiter IU' or role is 'Mitarbeiter QM':
+            users[user] = role
+
     ctx = {
         'report': report,
+        'users': users
     }
     return render(request, "report_detail.html", ctx)
 
@@ -115,15 +125,13 @@ def edit_correction_report(request, id):
                 file=file,
                 is_edited=True
             )
+            messages.success(request, "Die Änderungen deiner Korrekturmeldung wurden erfolgreich gespeichert.")
             return redirect(reports_detail_view, id=id)
         else:
+            messages.error(request, 'Deine Änderungen an der Korrekturmeldungen konnten nicht gespeichert werden.')
             return render(request, 'report_edit.html', {
                 'page_title': 'Korrekturmeldung bearbeiten',
-                'form': CorrectionReportForm(),
-                'show_message': True,
-                'alert': 'danger',
-                'message': 'Leider konnte deine Korrekturmeldung nicht erfolgreich bearbeitet werden!'
-                           'Versuche es bitte erneut.'
+                'form': form,
             })
     else:
         report = CorrectionReport.objects.get(id=id)
@@ -134,3 +142,33 @@ def edit_correction_report(request, id):
             'report': report,
             'show_message': False,
         })
+
+
+def assign_report(request):
+    if request.method == 'POST':
+        report = CorrectionReport.objects.get(id=request.POST['report_id'])
+        user = User.objects.get(id=request.POST['user_id'])
+        if report is not None:
+            CorrectionReport.objects.filter(id=report.id).update(
+                qm_manager=request.user,
+                assigned_at=datetime.datetime.now(),
+                assigned_to=user,
+                report_status=CorrectionReport.ReportStatus.ASSIGNED
+            )
+            messages.success(request, f'Die Korrekturmeldung wurde erfolgreich an {user.username} zugewiesen.')
+            return redirect(reports_detail_view, id=report.id)
+        else:
+            messages.error(request, f'Die Korrekturmeldung konnte nicht zugewiesen werden.')
+            return redirect(reports_detail_view, id=report.id)
+
+
+def get_user_role(user):
+    groups = user.groups.all().values_list('name', flat=True)
+    if 'Leiter QM' in groups:
+        return 'Leiter QM'
+    if 'Mitarbeiter QM' in groups:
+        return 'Mitarbeiter QM'
+    if 'Mitarbeiter IU' in groups:
+        return 'Mitarbeiter IU'
+    if 'Student' in groups:
+        return 'Student'
