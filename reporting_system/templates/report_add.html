@@ -92,7 +92,6 @@
 
     uploadField.onchange = function () {
         if (this.files[0].size > 10_485_760) {
-            uploadField.validity.valid = false;
             uploadField.setCustomValidity("Datei darf nicht größer als 10MB sein.");
             uploadField.reportValidity();
             uploadField.value = "";
