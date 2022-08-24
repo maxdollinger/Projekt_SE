@@ -30,9 +30,9 @@ class CorrectionReport(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     assigned_at = models.DateTimeField(default=None, blank=True, null=True)
     edited_at = models.DateTimeField(auto_now=True)
-    file_name = models.CharField("Dateiname", max_length=255, blank=True, null=True, error_messages={
-        'max_length': 'Der Dateiname darf maximal 255 Zeichen lang sein.'
-    })
+    file_name = models.CharField("Dateiname", max_length=254, blank=True, null=True, error_messages={
+        'max_length': 'Der Dateiname darf maximal 254 Zeichen lang sein.'
+    }, validators=[MinLengthValidator(10, message='Der Dateiname muss mindestens 10 Zeichen lang sein.')])
     file = models.FileField("Datei", upload_to='%Y/%m/%d', blank=True, null=True)
     course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False, error_messages={
         'max_length': 'Die IU Kursbezeichnung darf maximal 255 Zeichen lang sein.'
