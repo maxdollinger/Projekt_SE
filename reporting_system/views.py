@@ -10,7 +10,8 @@ from django.shortcuts import redirect
 from django.contrib.auth import get_user
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .services import get_assignee_users, get_user_role, get_qm_users
+from .services import get_assignee_users, get_user_role, get_qm_users, role_is_valid, Roles, roles_are_valid
+from django.contrib.auth.decorators import login_required
 
 
 def add_correction_report(request):
@@ -106,7 +107,11 @@ def get_reports_role_based(user, role, filter):
         return CorrectionReport.objects.filter(report_status__in=filters[filter]).order_by('-created_at')
 
 
+@login_required
 def edit_report_student(request, id):
+    if not role_is_valid(request, Roles.STUDENT.value):
+        return redirect(reports_all_view)
+
     if request.method == "POST":
         form = CorrectionReportStudentForm(request.POST)
 
@@ -142,7 +147,11 @@ def edit_report_student(request, id):
         })
 
 
+@login_required
 def edit_report_qm(request, id):
+    if not roles_are_valid(request, [Roles.QM_MANAGER.value, Roles.QM_LEADER.value]):
+        return redirect(reports_all_view)
+
     if request.method == "POST":
         form = CorrectionReportQMForm(request.POST)
 
@@ -174,7 +183,11 @@ def edit_report_qm(request, id):
         })
 
 
+@login_required
 def assign_report(request):
+    if not roles_are_valid(request, [Roles.QM_MANAGER.value, Roles.QM_LEADER.value]):
+        return redirect(reports_all_view)
+
     if request.method == 'POST':
         report = CorrectionReport.objects.get(id=request.POST['report_id'])
         user = User.objects.get(id=request.POST['user_id'])
