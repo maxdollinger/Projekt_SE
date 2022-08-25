@@ -37,5 +37,5 @@ class CorrectionReport(models.Model):
     course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False, error_messages={
         'max_length': 'Die IU Kursbezeichnung darf maximal 255 Zeichen lang sein.'
     })
-    report_status = models.CharField("Status der Korrekturmeldung", max_length=2, choices=ReportStatus.choices, default=ReportStatus.REPORTED, null=True)
+    report_status = models.CharField("Status der Korrekturmeldung", max_length=2, choices=ReportStatus.choices, default=ReportStatus.REPORTED, null=True, blank=True)
     report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.CORRECTION, null=True)

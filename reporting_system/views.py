@@ -2,12 +2,15 @@ import datetime
 
 from django.shortcuts import render, redirect
 from reporting_system.forms.correction_report_form import CorrectionReportForm
+from reporting_system.forms.correction_report_form import CorrectionReportQMForm
+from reporting_system.forms.correction_report_form import CorrectionReportStudentForm
 from .models import CorrectionReport
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth import get_user
 from django.contrib.auth.models import User
 from django.contrib import messages
+from .services import get_assignee_users, get_user_role, get_qm_users
 
 
 def add_correction_report(request):
@@ -78,15 +81,11 @@ def reports_all_view(request):
 def reports_detail_view(request, id):
     report = CorrectionReport.objects.get(id=id)
 
-    users = {}
-    for user in User.objects.all():
-        role = get_user_role(user)
-        if role is 'Mitarbeiter IU' or role is 'Mitarbeiter QM':
-            users[user] = role
-
     ctx = {
         'report': report,
-        'users': users
+        'users': get_assignee_users(),
+        'creator': report.created_by,
+        'role': get_user_role(request.user)
     }
     return render(request, "report_detail.html", ctx)
 
@@ -107,9 +106,10 @@ def get_reports_role_based(user, role, filter):
         return CorrectionReport.objects.filter(report_status__in=filters[filter]).order_by('-created_at')
 
 
-def edit_correction_report(request, id):
+def edit_report_student(request, id):
     if request.method == "POST":
-        form = CorrectionReportForm(request.POST, request.FILES)
+        form = CorrectionReportStudentForm(request.POST)
+
         if 'file' in request.FILES:
             file = request.FILES['file']
         else:
@@ -120,27 +120,57 @@ def edit_correction_report(request, id):
                 title=form.cleaned_data['title'],
                 description=form.cleaned_data['description'],
                 course=form.cleaned_data['course'],
-                report_type=form.cleaned_data['report_type'],
                 file_name=form.cleaned_data['file_name'],
-                file=file,
-                is_edited=True
+                file=file
             )
             messages.success(request, "Die Änderungen deiner Korrekturmeldung wurden erfolgreich gespeichert.")
             return redirect(reports_detail_view, id=id)
         else:
             messages.error(request, 'Deine Änderungen an der Korrekturmeldungen konnten nicht gespeichert werden.')
-            return render(request, 'report_edit.html', {
+            return render(request, 'report_edit_student.html', {
                 'page_title': 'Korrekturmeldung bearbeiten',
                 'form': form,
             })
     else:
         report = CorrectionReport.objects.get(id=id)
 
-        return render(request, 'report_edit.html', {
+        return render(request, 'report_edit_student.html', {
             'page_title': 'Korrekturmeldung bearbeiten',
-            'form': CorrectionReportForm(instance=report),
+            'form': CorrectionReportStudentForm(instance=report),
             'report': report,
-            'show_message': False,
+            'role': get_user_role(request.user),
+        })
+
+
+def edit_report_qm(request, id):
+    if request.method == "POST":
+        form = CorrectionReportQMForm(request.POST)
+
+        if form.is_valid():
+            qm_manager = User.objects.get(id=request.POST['qm_user_id'])
+
+            CorrectionReport.objects.filter(id=id).update(
+                report_type=form.cleaned_data['report_type'],
+                report_status=form.cleaned_data['report_status'],
+                qm_manager=qm_manager
+            )
+            messages.success(request, "Die Änderungen deiner Korrekturmeldung wurden erfolgreich gespeichert.")
+            return redirect(reports_detail_view, id=id)
+        else:
+            messages.error(request, 'Deine Änderungen an der Korrekturmeldungen konnten nicht gespeichert werden.')
+            return render(request, 'report_edit_qm.html', {
+                'page_title': 'Korrekturmeldung bearbeiten',
+                'form': form,
+            })
+    else:
+        report = CorrectionReport.objects.get(id=id)
+
+        return render(request, 'report_edit_qm.html', {
+            'page_title': 'Korrekturmeldung bearbeiten',
+            'form': CorrectionReportQMForm(instance=report),
+            'report': report,
+            'role': get_user_role(request.user),
+            'users': get_qm_users()
         })
 
 
@@ -160,15 +190,3 @@ def assign_report(request):
         else:
             messages.error(request, f'Die Korrekturmeldung konnte nicht zugewiesen werden.')
             return redirect(reports_detail_view, id=report.id)
-
-
-def get_user_role(user):
-    groups = user.groups.all().values_list('name', flat=True)
-    if 'Leiter QM' in groups:
-        return 'Leiter QM'
-    if 'Mitarbeiter QM' in groups:
-        return 'Mitarbeiter QM'
-    if 'Mitarbeiter IU' in groups:
-        return 'Mitarbeiter IU'
-    if 'Student' in groups:
-        return 'Student'
