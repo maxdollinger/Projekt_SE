@@ -14,6 +14,7 @@ from .services import get_assignee_users, get_user_role, get_qm_users, role_is_v
 from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def add_correction_report(request):
     if request.method == 'POST':
         form = CorrectionReportForm(request.POST, request.FILES)
@@ -84,7 +85,8 @@ def reports_detail_view(request, id):
 
     ctx = {
         'report': report,
-        'users': get_assignee_users(),
+        'assignees': get_assignee_users(),
+        'managers': get_qm_users(),
         'creator': report.created_by,
         'role': get_user_role(request.user)
     }
@@ -190,15 +192,21 @@ def assign_report(request):
 
     if request.method == 'POST':
         report = CorrectionReport.objects.get(id=request.POST['report_id'])
-        user = User.objects.get(id=request.POST['user_id'])
+        assignee = User.objects.get(id=request.POST['assignee_id'])
+
+        if request.POST['manager_id'] == '':
+            manager = request.user
+        else:
+            manager = User.objects.get(id=request.POST['manager_id'])
+
         if report is not None:
             CorrectionReport.objects.filter(id=report.id).update(
-                qm_manager=request.user,
+                qm_manager=manager,
                 assigned_at=datetime.datetime.now(),
-                assigned_to=user,
+                assigned_to=assignee,
                 report_status=CorrectionReport.ReportStatus.ASSIGNED
             )
-            messages.success(request, f'Die Korrekturmeldung wurde erfolgreich an {user.username} zugewiesen.')
+            messages.success(request, f'Die Korrekturmeldung wurde erfolgreich an {assignee.username} zugewiesen.')
             return redirect(reports_detail_view, id=report.id)
         else:
             messages.error(request, f'Die Korrekturmeldung konnte nicht zugewiesen werden.')
