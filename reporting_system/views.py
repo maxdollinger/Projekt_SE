@@ -111,11 +111,9 @@ def get_reports_role_based(user, role, filter):
 
 @login_required
 def edit_report_student(request, id):
-    if not role_is_valid(request, Roles.STUDENT.value):
-        return redirect(reports_all_view)
-
     if request.method == "POST":
-        form = CorrectionReportStudentForm(request.POST)
+        report = CorrectionReport.objects.get(id=id)
+        form = CorrectionReportStudentForm(request.POST, request.FILES)
 
         if 'file' in request.FILES:
             file = request.FILES['file']
@@ -137,6 +135,8 @@ def edit_report_student(request, id):
             return render(request, 'report_edit_student.html', {
                 'page_title': 'Korrekturmeldung bearbeiten',
                 'form': form,
+                'report': report,
+                'role': get_user_role(request.user),
             })
     else:
         report = CorrectionReport.objects.get(id=id)

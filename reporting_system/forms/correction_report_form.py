@@ -22,7 +22,7 @@ class CorrectionReportForm(ModelForm):
 class CorrectionReportStudentForm(ModelForm):
     class Meta:
         model = CorrectionReport
-        fields = ('title', 'description', 'file_name', 'course', 'file', 'created_by')
+        fields = ('title', 'description', 'file_name', 'course', 'file')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control my-1', 'placeholder': 'Korrekturmeldung'}),
