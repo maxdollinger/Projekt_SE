@@ -156,9 +156,16 @@ def edit_report_qm(request, id):
 
     if request.method == "POST":
         form = CorrectionReportQMForm(request.POST)
+        report = CorrectionReport.objects.get(id=id)
 
         if form.is_valid():
-            qm_manager = User.objects.get(id=request.POST['qm_user_id'])
+            if 'qm_user_id' in request.POST:
+                qm_manager = User.objects.get(id=request.POST['qm_user_id'])
+            else:
+                if report.qm_manager is not None:
+                    qm_manager = report.qm_manager
+                else:
+                    qm_manager = None
 
             CorrectionReport.objects.filter(id=id).update(
                 report_type=form.cleaned_data['report_type'],
@@ -172,6 +179,9 @@ def edit_report_qm(request, id):
             return render(request, 'report_edit_qm.html', {
                 'page_title': 'Korrekturmeldung bearbeiten',
                 'form': form,
+                'report': report,
+                'role': get_user_role(request.user),
+                'users': get_qm_users()
             })
     else:
         report = CorrectionReport.objects.get(id=id)
