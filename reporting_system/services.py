@@ -1,28 +1,28 @@
-import enum
-
 from django.contrib.auth import get_user
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import redirect
+from enum import Enum
 
 
 def get_user_role(user):
     groups = user.groups.all().values_list('name', flat=True)
-    if 'Leiter QM' in groups:
-        return 'Leiter QM'
-    if 'Mitarbeiter QM' in groups:
-        return 'Mitarbeiter QM'
-    if 'Mitarbeiter IU' in groups:
-        return 'Mitarbeiter IU'
-    if 'Student' in groups:
-        return 'Student'
+
+    if Roles.QM_LEADER.value in groups:
+        return Roles.QM_LEADER.value
+    if Roles.QM_MANAGER.value in groups:
+        return Roles.QM_MANAGER.value
+    if Roles.IU_EMPLOYEE.value in groups:
+        return Roles.IU_EMPLOYEE.value
+    if Roles.STUDENT.value in groups:
+        return Roles.STUDENT.value
 
 
 def get_assignee_users():
     users = {}
     for user in User.objects.all():
         role = get_user_role(user)
-        if role is 'Mitarbeiter IU' or role is 'Mitarbeiter QM':
+        if role == Roles.IU_EMPLOYEE.value or role == Roles.QM_MANAGER.value:
             users[user] = role
 
     return users
@@ -32,7 +32,7 @@ def get_qm_users():
     users = {}
     for user in User.objects.all():
         role = get_user_role(user)
-        if role is 'Leiter QM' or role is 'Mitarbeiter QM':
+        if role == Roles.QM_LEADER.value or role == Roles.QM_MANAGER.value:
             users[user] = role
 
     return users
@@ -62,7 +62,7 @@ def roles_are_valid(request, roles: list):
         return False
 
 
-class Roles(enum.Enum):
+class Roles(Enum):
     STUDENT = 'Student'
     QM_LEADER = 'Leiter QM'
     IU_EMPLOYEE = 'Mitarbeiter IU'

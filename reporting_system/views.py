@@ -113,6 +113,11 @@ def get_reports_role_based(user, role, filter):
 def edit_report_student(request, id):
     if request.method == "POST":
         report = CorrectionReport.objects.get(id=id)
+
+        if request.user != report.created_by:
+            messages.error(request, "Nur der Ersteller einer Korrekturmeldung darf die Daten bearbeiten.")
+            return redirect(reports_all_view)
+
         form = CorrectionReportStudentForm(request.POST, request.FILES)
 
         if 'file' in request.FILES:
@@ -202,7 +207,14 @@ def assign_report(request):
 
     if request.method == 'POST':
         report = CorrectionReport.objects.get(id=request.POST['report_id'])
-        assignee = User.objects.get(id=request.POST['assignee_id'])
+
+        if request.POST['assignee_id'] == '':
+            if report.assigned_to is None:
+                assignee = None
+            else:
+                assignee = report.assigned_to
+        else:
+            assignee = User.objects.get(id=request.POST['assignee_id'])
 
         if request.POST['manager_id'] == '':
             manager = request.user

@@ -19,9 +19,13 @@
                                 </svg>
                             </label>
                             <select name="assignee_id" class="form-select">
-                                {% for user, role in assignees.items %}
-                                <option value='{{ user.id }}'>{{ user.username }} ({{ role }})</option>
-                                {% endfor %}
+                                {% if assignees %}
+                                    {% for user, role in assignees.items %}
+                                        <option value='{{ user.id }}'>{{ user.username }} ({{ role }})</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value=''>Keine Nutzer gefunden</option>
+                                {% endif %}
                             </select>
                             <input name="report_id" type="text" value="{{ report.id }}" hidden>
                         </div>
