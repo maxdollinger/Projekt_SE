@@ -12,6 +12,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .services import get_assignee_users, get_user_role, get_qm_users, role_is_valid, Roles, roles_are_valid
 from django.contrib.auth.decorators import login_required
+import os
+from django.core.files.storage import default_storage
+
 
 
 @login_required
@@ -122,8 +125,19 @@ def edit_report_student(request, id):
 
         if 'file' in request.FILES:
             file = request.FILES['file']
+            file.name = file.name.replace(" ", "_")
+
+            if os.path.exists(report.file.path):
+                os.remove(report.file.path)
+                print(f"The file has been deleted successfully")
+
+            default_storage.save(file.name, file)
+            print(f"The file {file.name} has been saved successfully")
         else:
-            file = CorrectionReport.objects.get(id=id).file
+            if report.file is None:
+                file = None
+            else:
+                file = report.file
 
         if form.is_valid():
             CorrectionReport.objects.filter(id=id).update(
