@@ -9,4 +9,5 @@ urlpatterns = [
     path("assign", views.assign_report, name="assign_report"),
     path("reports", views.reports_all_view, name="reports"),
     path("detail/<int:id>", views.reports_detail_view, name="reports_detail"),
+    path("delete/<int:id>", views.delete_report, name="delete_report"),
 ]

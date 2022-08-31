@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import redirect
 from enum import Enum
+import os
 
 
 def get_user_role(user):
@@ -67,3 +68,8 @@ class Roles(Enum):
     QM_LEADER = 'Leiter QM'
     IU_EMPLOYEE = 'Mitarbeiter IU'
     QM_MANAGER = 'Mitarbeiter QM'
+
+
+def delete_file(path):
+    if os.path.exists(path):
+        os.remove(path)
