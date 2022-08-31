@@ -56,6 +56,7 @@ def add_correction_report(request):
             correction_report.file_name = form.cleaned_data['file_name']
             correction_report.file = file
             correction_report.course = form.cleaned_data['course']
+            correction_report.document_type = form.cleaned_data['document_type']
             correction_report.report_type = form.cleaned_data['report_type']
             correction_report.save()
             messages.success(request, "Deine Korrekturmeldung wurde erfolgreich angelegt.")
@@ -141,6 +142,7 @@ def edit_report_student(request, id):
                 title=form.cleaned_data['title'],
                 description=form.cleaned_data['description'],
                 course=form.cleaned_data['course'],
+                document_type=form.cleaned_data['document_type'],
                 file_name=form.cleaned_data['file_name'],
                 file=file
             )

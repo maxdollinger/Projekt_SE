@@ -6,6 +6,30 @@ import os
 
 
 class CorrectionReport(models.Model):
+    class DocumentType(models.TextChoices):
+        SCRIPT = 1, _('Skript')
+        LITERATURE = 2, _('Literaturliste')
+        ONLINE_TESTS = 3, _('Online Tests')
+        EVALUATION = 4, _('Kursevaluation')
+        EXAM = 5, _('Musterklausur')
+        EXAM_SOLUTIONS = 6, _('Musterlösung')
+        SLIDE_SET = 7, _('Foliensätze für Präsenzstudium')
+        PODCAST = 8, _('Podcast')
+        PRESENTATION = 9, _('Präsentation')
+        INTERACTIVE_LECTURE = 10, _('Interaktive Lehrveranstaltung')
+        TUTORIAL = 11, _('Tutorium')
+        TUTORIAL_DOCUMENTS = 12, _('Dokumente Tutorium')
+        REPETITORIUM = 13, _('Repetitorium')
+        LEARNING_SPRINT = 14, _('Learning Sprint')
+        WORKBOOK = 15, _('Workbook Aufgaben')
+        BOOTCAMP = 16, _('Bootcamp')
+        SHORTCAST = 17, _('Shortcast')
+        LIVE_TUTORIAL = 18, _('Live-Tutorial')
+        TASK = 19, _('Aufgabenstellung: Schriftliche Ausarbeitung')
+        GALLERY = 20, _('Videogalerie')
+        PRE_ASSESSMENT = 21, _('Pre-Assessment')
+        OTHER = 22, _('Sonstige Dokumente')
+
     class ReportType(models.TextChoices):
         MISTAKE = 1, _('Fehler')
         CORRECTION = 2, _('Verbesserung')
@@ -38,8 +62,12 @@ class CorrectionReport(models.Model):
     course = models.CharField("IU Kursbezeichnung", max_length=255, blank=False, error_messages={
         'max_length': 'Die IU Kursbezeichnung darf maximal 255 Zeichen lang sein.'
     })
-    report_status = models.CharField("Status der Korrekturmeldung", max_length=2, choices=ReportStatus.choices, default=ReportStatus.REPORTED, null=True, blank=True)
-    report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.CORRECTION, null=True)
+    report_status = models.CharField("Status der Korrekturmeldung", max_length=255, choices=ReportStatus.choices,
+                                     default=ReportStatus.REPORTED, null=True, blank=True)
+    report_type = models.CharField("Art der Korrekturmeldung", max_length=255, choices=ReportType.choices,
+                                   default=ReportType.CORRECTION, null=True)
+    document_type = models.CharField("Lehrmaterial", max_length=255, choices=DocumentType.choices,
+                                     default=DocumentType.SCRIPT)
 
     def delete(self, *args, **kwargs):
         self.file.storage.delete(self.file.name)

@@ -52,6 +52,13 @@
                 </div>
 
                 <div class="mb-3 row">
+                    <label for="documentType" class="col-sm-2 col-form-label">{{ form.document_type.label }}</label>
+                    <div class="col-sm-10">
+                        {{ form.document_type }}
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
                     <label for="type" class="col-sm-2 col-form-label">{{ form.report_type.label }}</label>
                     <div class="col-sm-10">
                         {{ form.report_type }}
@@ -75,8 +82,8 @@
                     <div class="col-sm-10">
                         {{ form.file }}
                     </div>
-                    <div id="emailHelp" class="form-text">
-                        <p>Die maximale Uploadgröße beträgt 10MB.</p>
+                    <div id="fileSizeHelp" class="form-text">
+                        <p>Die maximale Uploadgröße beträgt 10 MB.</p>
                     </div>
                 </div>
             </div>
