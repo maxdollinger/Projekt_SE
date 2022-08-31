@@ -14,7 +14,7 @@ from .services import get_assignee_users, get_user_role, get_qm_users, role_is_v
 from django.contrib.auth.decorators import login_required
 import os
 from django.core.files.storage import default_storage
-
+from django.db.models import Q
 
 
 @login_required
@@ -106,7 +106,7 @@ def get_reports_role_based(user, role, filter):
         return CorrectionReport.objects.filter(created_by=user, report_status__in=filters[filter]).order_by(
             '-edited_at')
     if role == 'Mitarbeiter IU':
-        return CorrectionReport.objects.filter(assigned_to=user, created_by=user, report_status__in=filters[filter]).order_by(
+        return CorrectionReport.objects.filter(Q(assigned_to=user) | Q(created_by=user), report_status__in=filters[filter]).order_by(
             '-edited_at')
     if role == 'Leiter QM' or role == 'Mitarbeiter QM':
         return CorrectionReport.objects.filter(report_status__in=filters[filter]).order_by('-created_at')
