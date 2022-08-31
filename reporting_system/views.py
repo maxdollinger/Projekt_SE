@@ -98,15 +98,15 @@ def reports_detail_view(request, id):
 
 def get_reports_role_based(user, role, filter):
     filters = {
-        'open': [1, 2, 3],
-        'all': [1, 2, 3, 4, 5],
+        'open': [1, 2, 3, 4, 5],
+        'all': [1, 2, 3, 4, 5, 6, 7],
     }
 
     if role == 'Student':
         return CorrectionReport.objects.filter(created_by=user, report_status__in=filters[filter]).order_by(
             '-edited_at')
     if role == 'Mitarbeiter IU':
-        return CorrectionReport.objects.filter(assigned_to=user, report_status__in=filters[filter]).order_by(
+        return CorrectionReport.objects.filter(assigned_to=user, created_by=user, report_status__in=filters[filter]).order_by(
             '-edited_at')
     if role == 'Leiter QM' or role == 'Mitarbeiter QM':
         return CorrectionReport.objects.filter(report_status__in=filters[filter]).order_by('-created_at')
