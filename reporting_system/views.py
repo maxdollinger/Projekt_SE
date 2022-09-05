@@ -286,7 +286,7 @@ def assign_report(request):
         if report is not None:
             CorrectionReport.objects.filter(id=report.id).update(
                 qm_manager=manager,
-                assigned_at=datetime.datetime.now(),
+                assigned_at=datetime.now(),
                 assigned_to=assignee,
                 report_status=CorrectionReport.ReportStatus.ASSIGNED
             )
