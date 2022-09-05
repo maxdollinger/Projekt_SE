@@ -32,13 +32,23 @@ class CorrectionReportStudentForm(ModelForm):
             'file': forms.FileInput(attrs={'class': 'form-control my-1'}),
         }
 
+class CorrectionReportEMPForm(ModelForm):
+    class Meta:
+        model = CorrectionReport
+        fields = ('report_status', 'comment')
+
+        widgets = {
+            'report_status': forms.Select(attrs={'class': 'form-control my-1', 'placeholder': 'Status der Meldung'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control my-1', 'placeholder': 'Kommentar'}),
+        }
 
 class CorrectionReportQMForm(ModelForm):
     class Meta:
         model = CorrectionReport
-        fields = ('report_type', 'report_status')
+        fields = ('report_type', 'report_status', 'comment')
 
         widgets = {
             'report_type': forms.Select(attrs={'class': 'form-control my-1', 'placeholder': 'Art der Meldung'}),
             'report_status': forms.Select(attrs={'class': 'form-control my-1', 'placeholder': 'Status der Meldung'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control my-1', 'placeholder': 'Kommentar'}),
         }

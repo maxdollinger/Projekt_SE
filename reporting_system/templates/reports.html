@@ -35,8 +35,9 @@
                     <div class="col">
                         <ul class="list-inline">
                             <li class="list-inline-item"> <i>Kurs</i> {{report.course}}.</li>
-                            <li class="list-inline-item"> <i>Erstellt am</i> {{report.created_at|date:"d.m.Y"}}</li>
                             <li class="list-inline-item"> <i>Status</i> {{report.get_report_status_display}}</li>
+                            <li class="list-inline-item"> <i>Geändert am</i> {{report.edited_at|date:"d.m.Y"}}</li>
+                            <li class="list-inline-item"> <i>Erstellt am</i> {{report.created_at|date:"d.m.Y"}}</li>
                         </ul>
                     </div>
                 </div>
