@@ -1,7 +1,7 @@
-import datetime
+from datetime import datetime
 
 from django.shortcuts import render, redirect
-from reporting_system.forms.correction_report_form import CorrectionReportForm
+from reporting_system.forms.correction_report_form import CorrectionReportEMPForm, CorrectionReportForm
 from reporting_system.forms.correction_report_form import CorrectionReportQMForm
 from reporting_system.forms.correction_report_form import CorrectionReportStudentForm
 from .models import CorrectionReport
@@ -26,7 +26,8 @@ def add_correction_report(request):
         if 'file' in request.FILES:
             file = request.FILES['file']
             if file.size >= 10_455_040:
-                messages.warning(request, 'Dateien dürfen nicht größer als 10 MB sein.')
+                messages.warning(
+                    request, 'Dateien dürfen nicht größer als 10 MB sein.')
                 return render(request, 'report_add.html', {
                     'page_title': 'Neue Korrekturmeldung',
                     'form': form,
@@ -44,7 +45,8 @@ def add_correction_report(request):
                 })
 
             if form.cleaned_data['file_name'] is not None and 'file' not in request.FILES:
-                messages.warning(request, 'Bitte hänge eine Datei an, wenn du einen Dateinamen festlegst.')
+                messages.warning(
+                    request, 'Bitte hänge eine Datei an, wenn du einen Dateinamen festlegst.')
                 return render(request, 'report_add.html', {
                     'page_title': 'Neue Korrekturmeldung',
                     'form': form,
@@ -58,10 +60,12 @@ def add_correction_report(request):
             correction_report.course = form.cleaned_data['course']
             correction_report.report_type = form.cleaned_data['report_type']
             correction_report.save()
-            messages.success(request, "Deine Korrekturmeldung wurde erfolgreich angelegt.")
+            messages.success(
+                request, "Deine Korrekturmeldung wurde erfolgreich angelegt.")
             return redirect(reports_detail_view, id=correction_report.id)
         else:
-            messages.error(request, 'Leider konnte deine Korrekturmeldung nicht erfolgreich angelegt werden.')
+            messages.error(
+                request, 'Leider konnte deine Korrekturmeldung nicht erfolgreich angelegt werden.')
             return render(request, 'report_add.html', {
                 'page_title': 'Neue Korrekturmeldung',
                 'form': form,
@@ -118,7 +122,8 @@ def edit_report_student(request, id):
         report = CorrectionReport.objects.get(id=id)
 
         if request.user != report.created_by:
-            messages.error(request, "Nur der Ersteller einer Korrekturmeldung darf die Daten bearbeiten.")
+            messages.error(
+                request, "Nur der Ersteller einer Korrekturmeldung darf die Daten bearbeiten.")
             return redirect(reports_all_view)
 
         form = CorrectionReportStudentForm(request.POST, request.FILES)
@@ -145,12 +150,15 @@ def edit_report_student(request, id):
                 description=form.cleaned_data['description'],
                 course=form.cleaned_data['course'],
                 file_name=form.cleaned_data['file_name'],
+                edited_at=datetime.now(),
                 file=file
             )
-            messages.success(request, "Die Änderungen deiner Korrekturmeldung wurden erfolgreich gespeichert.")
+            messages.success(
+                request, "Die Änderungen deiner Korrekturmeldung wurden erfolgreich gespeichert.")
             return redirect(reports_detail_view, id=id)
         else:
-            messages.error(request, 'Deine Änderungen an der Korrekturmeldungen konnten nicht gespeichert werden.')
+            messages.error(
+                request, 'Deine Änderungen an der Korrekturmeldungen konnten nicht gespeichert werden.')
             return render(request, 'report_edit_student.html', {
                 'page_title': 'Korrekturmeldung bearbeiten',
                 'form': form,
@@ -169,13 +177,51 @@ def edit_report_student(request, id):
 
 
 @login_required
+def edit_report_emp(request, id):
+    if not roles_are_valid(request, [Roles.IU_EMPLOYEE.value]):
+        return redirect(reports_all_view)
+
+    if request.method == "POST":
+        form = CorrectionReportEMPForm(request.POST.copy())
+
+        if form.data['report_status'] != "3":
+            form.data['comment'] = None
+
+        if form.is_valid():
+            CorrectionReport.objects.filter(id=id).update(
+                report_status=form.cleaned_data['report_status'],
+                comment=form.cleaned_data['comment'],
+                edited_at=datetime.now(),
+            )
+            messages.success(request, "Die Änderungen deiner Korrekturmeldung wurden erfolgreich gespeichert.")
+            return redirect(reports_detail_view, id=id)
+        else:
+            messages.error(request, 'Deine Änderungen an der Korrekturmeldungen konnten nicht gespeichert werden.')
+            return render(request, 'report_edit_qm.html', {
+                'page_title': 'Korrekturmeldung bearbeiten',
+                'form': form,
+                'report': report,
+            })
+    else:
+        report = CorrectionReport.objects.get(id=id)
+
+        return render(request, 'report_edit_emp.html', {
+            'page_title': 'Korrekturmeldung bearbeiten',
+            'form': CorrectionReportEMPForm(instance=report),
+            'report': report,
+        })
+
+@login_required
 def edit_report_qm(request, id):
     if not roles_are_valid(request, [Roles.QM_MANAGER.value, Roles.QM_LEADER.value]):
         return redirect(reports_all_view)
 
     if request.method == "POST":
-        form = CorrectionReportQMForm(request.POST)
+        form = CorrectionReportQMForm(request.POST.copy())
         report = CorrectionReport.objects.get(id=id)
+
+        if form.data['report_status'] != "3":
+            form.data['comment'] = None
 
         if form.is_valid():
             if 'qm_user_id' in request.POST:
@@ -189,6 +235,8 @@ def edit_report_qm(request, id):
             CorrectionReport.objects.filter(id=id).update(
                 report_type=form.cleaned_data['report_type'],
                 report_status=form.cleaned_data['report_status'],
+                comment=form.cleaned_data['comment'],
+                edited_at=datetime.now(),
                 qm_manager=qm_manager
             )
             messages.success(request, "Die Änderungen deiner Korrekturmeldung wurden erfolgreich gespeichert.")

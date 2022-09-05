@@ -40,6 +40,7 @@ class CorrectionReport(models.Model):
     })
     report_status = models.CharField("Status der Korrekturmeldung", max_length=2, choices=ReportStatus.choices, default=ReportStatus.REPORTED, null=True, blank=True)
     report_type = models.CharField("Art der Korrekturmeldung", max_length=2, choices=ReportType.choices, default=ReportType.CORRECTION, null=True)
+    comment = models.TextField("Ablehnungs Grund", blank=True, null=True)
 
     def delete(self, *args, **kwargs):
         self.file.storage.delete(self.file.name)
