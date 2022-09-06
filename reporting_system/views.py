@@ -197,7 +197,7 @@ def edit_report_emp(request, id):
         else:
             messages.error(request, 'Deine Änderungen an der Korrekturmeldungen konnten nicht gespeichert werden.')
             return render(request, 'report_edit_qm.html', {
-                'page_title': 'Korrekturmeldung bearbeiten',
+                'page_title': 'Status ändern',
                 'form': form,
                 'report': report,
             })
@@ -205,7 +205,7 @@ def edit_report_emp(request, id):
         report = CorrectionReport.objects.get(id=id)
 
         return render(request, 'report_edit_emp.html', {
-            'page_title': 'Korrekturmeldung bearbeiten',
+            'page_title': 'Status ändern',
             'form': CorrectionReportEMPForm(instance=report),
             'report': report,
         })
@@ -287,6 +287,7 @@ def assign_report(request):
                 qm_manager=manager,
                 assigned_at=datetime.now(),
                 assigned_to=assignee,
+                edited_at=datetime.now(),
                 report_status=CorrectionReport.ReportStatus.ASSIGNED
             )
             messages.success(request, f'Die Korrekturmeldung wurde erfolgreich an {assignee.username} zugewiesen.')
