@@ -30,8 +30,10 @@
                             {{ form.comment }}
                         </div>
                     </div>
-
+                <div class="btn-group mx-1" role="group">
                 <input type="submit" value="Korrekturmeldung aktualisieren" class="btn btn-outline-primary mb-3">
+                <a href="{% url 'reports_detail' report.id %}" class="btn btn-outline-danger mb-3">Abbrechen</a>
+                </div>
             </form>
         </div>
     </div>
