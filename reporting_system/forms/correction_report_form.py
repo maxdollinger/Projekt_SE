@@ -7,13 +7,14 @@ from reporting_system.models import CorrectionReport
 class CorrectionReportForm(ModelForm):
     class Meta:
         model = CorrectionReport
-        fields = ('title', 'description', 'file_name', 'course', 'report_type', 'file', 'created_by')
+        fields = ('title', 'description', 'file_name', 'course', 'document_type', 'report_type', 'file', 'created_by')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control my-1', 'placeholder': 'Korrekturmeldung'}),
             'description': forms.Textarea(attrs={'class': 'form-control my-1', 'placeholder': 'Beschreibe deine Korrekturmeldung'}),
             'file_name': forms.TextInput(attrs={'class': 'form-control my-1', 'placeholder': 'Dateiname'}),
             'course': forms.TextInput(attrs={'class': 'form-control my-1', 'placeholder': 'IMT101'}),
+            'document_type': forms.Select(attrs={'class': 'form-control my-1'}),
             'report_type': forms.Select(attrs={'class': 'form-control my-1', 'placeholder': 'Art der Meldung'}),
             'file': forms.FileInput(attrs={'class': 'form-control my-1'}),
         }
@@ -22,7 +23,7 @@ class CorrectionReportForm(ModelForm):
 class CorrectionReportStudentForm(ModelForm):
     class Meta:
         model = CorrectionReport
-        fields = ('title', 'description', 'file_name', 'course', 'file')
+        fields = ('title', 'description', 'file_name', 'course', 'file', 'document_type')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control my-1', 'placeholder': 'Korrekturmeldung'}),
@@ -30,6 +31,7 @@ class CorrectionReportStudentForm(ModelForm):
             'file_name': forms.TextInput(attrs={'class': 'form-control my-1', 'placeholder': 'Dateiname'}),
             'course': forms.TextInput(attrs={'class': 'form-control my-1', 'placeholder': 'IMT101'}),
             'file': forms.FileInput(attrs={'class': 'form-control my-1'}),
+            'document_type': forms.Select(attrs={'class': 'form-control my-1'}),
         }
 
 class CorrectionReportEMPForm(ModelForm):

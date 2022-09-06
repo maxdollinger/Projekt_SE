@@ -10,12 +10,12 @@ from django.shortcuts import redirect
 from django.contrib.auth import get_user
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .services import get_assignee_users, get_user_role, get_qm_users, role_is_valid, Roles, roles_are_valid
+from .services import get_assignee_users, get_user_role, get_qm_users, role_is_valid, Roles, roles_are_valid,\
+    delete_file
 from django.contrib.auth.decorators import login_required
 import os
 from django.core.files.storage import default_storage
 from django.db.models import Q
-
 
 @login_required
 def add_correction_report(request):
@@ -58,6 +58,7 @@ def add_correction_report(request):
             correction_report.file_name = form.cleaned_data['file_name']
             correction_report.file = file
             correction_report.course = form.cleaned_data['course']
+            correction_report.document_type = form.cleaned_data['document_type']
             correction_report.report_type = form.cleaned_data['report_type']
             correction_report.save()
             messages.success(
@@ -132,10 +133,7 @@ def edit_report_student(request, id):
             file = request.FILES['file']
             file.name = file.name.replace(" ", "_")
 
-            if os.path.exists(report.file.path):
-                os.remove(report.file.path)
-                print(f"The file has been deleted successfully")
-
+            delete_file(report.file.path)
             default_storage.save(file.name, file)
             print(f"The file {file.name} has been saved successfully")
         else:
@@ -149,6 +147,7 @@ def edit_report_student(request, id):
                 title=form.cleaned_data['title'],
                 description=form.cleaned_data['description'],
                 course=form.cleaned_data['course'],
+                document_type=form.cleaned_data['document_type'],
                 file_name=form.cleaned_data['file_name'],
                 edited_at=datetime.now(),
                 file=file
@@ -198,7 +197,7 @@ def edit_report_emp(request, id):
         else:
             messages.error(request, 'Deine Änderungen an der Korrekturmeldungen konnten nicht gespeichert werden.')
             return render(request, 'report_edit_qm.html', {
-                'page_title': 'Korrekturmeldung bearbeiten',
+                'page_title': 'Status ändern',
                 'form': form,
                 'report': report,
             })
@@ -206,7 +205,7 @@ def edit_report_emp(request, id):
         report = CorrectionReport.objects.get(id=id)
 
         return render(request, 'report_edit_emp.html', {
-            'page_title': 'Korrekturmeldung bearbeiten',
+            'page_title': 'Status ändern',
             'form': CorrectionReportEMPForm(instance=report),
             'report': report,
         })
@@ -286,8 +285,9 @@ def assign_report(request):
         if report is not None:
             CorrectionReport.objects.filter(id=report.id).update(
                 qm_manager=manager,
-                assigned_at=datetime.datetime.now(),
+                assigned_at=datetime.now(),
                 assigned_to=assignee,
+                edited_at=datetime.now(),
                 report_status=CorrectionReport.ReportStatus.ASSIGNED
             )
             messages.success(request, f'Die Korrekturmeldung wurde erfolgreich an {assignee.username} zugewiesen.')
@@ -295,3 +295,25 @@ def assign_report(request):
         else:
             messages.error(request, f'Die Korrekturmeldung konnte nicht zugewiesen werden.')
             return redirect(reports_detail_view, id=report.id)
+
+
+@login_required
+def delete_report(request, id):
+    if request.method == "POST":
+        report = CorrectionReport.objects.get(id=id)
+        title = report.title
+        confirmation_text = request.POST['confirmation_text']
+
+        if request.user != report.created_by:
+            messages.error(request, f"Du bist nicht der Ersteller dieser Korrekturmeldung.")
+            return redirect(reports_all_view)
+
+        if confirmation_text == title:
+            delete_file(report.file.path)
+            report.delete()
+            messages.success(request, f"Die Korrekturmeldung {title} wurde erfolgreich gelöscht.")
+            return redirect(reports_all_view)
+        else:
+            messages.warning(request, f"\"{confirmation_text}\" stimmt nicht mit dem Titel der Korrekturmeldung "
+                                      f"\"{title}\" überein und konnte deshalb nicht gelöscht werden")
+            return redirect(reports_detail_view, id=id)
