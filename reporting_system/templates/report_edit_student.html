@@ -1,86 +1,89 @@
 {% extends "base/base.html" %}
 
 {% block title %}
-    {{ page_title }}
+{{ page_title }}
 {% endblock %}
 
 {% block body %}
-    {% if form.errors %}
-        {% for field in form %}
-            {% for error in field.errors %}
-            <div class="alert alert-warning my-3 d-flex justify-content-between">
-                <p class="m-0">{{ error|escape }}</p>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-        <div class="alert alert-warning my-3 d-flex justify-content-between">
-            <p class="m-0">{{ error|escape }}</p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
-    {% endif %}
+{% if form.errors %}
+{% for field in form %}
+{% for error in field.errors %}
+<div class="alert alert-warning my-3 d-flex justify-content-between">
+    <p class="m-0">{{ error|escape }}</p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endfor %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-warning my-3 d-flex justify-content-between">
+    <p class="m-0">{{ error|escape }}</p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
 
-    <div class="row">
-        <h1 class="display-4 mt-5 text-center">{{ page_title }}</h1>
-        <div class="col form-group">
-            <form action="{% url 'edit_report_student' report.id %}" method="POST" enctype="multipart/form-data">
+<div class="row">
+    <h1 class="display-4 mt-5 text-center">{{ page_title }}</h1>
+    <div class="col form-group">
+        <form action="{% url 'edit_report_student' report.id %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-                <div class="row my-5">
-                    <p class="my-3"><strong>Allgemeine Informationen</strong></p>
-                    <div class="mb-3 row">
-                        <label for="title" class="col-sm-2 col-form-label">{{ form.title.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.title }}
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label for="description" class="col-sm-2 col-form-label">{{ form.description.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.description }}
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label for="course" class="col-sm-2 col-form-label">{{ form.course.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.course }}
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label for="documentType" class="col-sm-2 col-form-label">{{ form.document_type.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.document_type }}
-                        </div>
+            <div class="row my-5">
+                <p class="my-3"><strong>Allgemeine Informationen</strong></p>
+                <div class="mb-3 row">
+                    <label for="title" class="col-sm-2 col-form-label">{{ form.title.label }}</label>
+                    <div class="col-sm-10">
+                        {{ form.title }}
                     </div>
                 </div>
 
-                <hr />
-
-                <div class="row my-5">
-                    <p class="my-3"><strong>Dokumente</strong></p>
-                    <div class="mb-3 row">
-                        <label for="fileName" class="col-sm-2 col-form-label">{{ form.file_name.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.file_name }}
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label for="file" class="col-sm-2 col-form-label">{{ form.file.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.file }}
-                        </div>
+                <div class="mb-3 row">
+                    <label for="description" class="col-sm-2 col-form-label">{{ form.description.label }}</label>
+                    <div class="col-sm-10">
+                        {{ form.description }}
                     </div>
                 </div>
 
+                <div class="mb-3 row">
+                    <label for="course" class="col-sm-2 col-form-label">{{ form.course.label }}</label>
+                    <div class="col-sm-10">
+                        {{ form.course }}
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label for="documentType" class="col-sm-2 col-form-label">{{ form.document_type.label }}</label>
+                    <div class="col-sm-10">
+                        {{ form.document_type }}
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row my-5">
+                <p class="my-3"><strong>Dokumente</strong></p>
+                <div class="mb-3 row">
+                    <label for="fileName" class="col-sm-2 col-form-label">{{ form.file_name.label }}</label>
+                    <div class="col-sm-10">
+                        {{ form.file_name }}
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label for="file" class="col-sm-2 col-form-label">{{ form.file.label }}</label>
+                    <div class="col-sm-10">
+                        {{ form.file }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group mx-1" role="group">
                 <input type="submit" value="Korrekturmeldung aktualisieren" class="btn btn-outline-primary mb-3">
-            </form>
-        </div>
+                <a href="{% url 'reports_detail' report.id %}" class="btn btn-outline-danger mb-3">Abbrechen</a>
+            </div>
+        </form>
     </div>
+</div>
 
 <script>
     const uploadField = document.getElementById("id_file");
