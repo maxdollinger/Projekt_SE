@@ -71,5 +71,6 @@ class CorrectionReport(models.Model):
                                      default=DocumentType.SCRIPT)
 
     def delete(self, *args, **kwargs):
-        self.file.storage.delete(self.file.name)
+        if self.file :
+            self.file.storage.delete(self.file.name)
         super().delete()

@@ -68,8 +68,3 @@ class Roles(Enum):
     QM_LEADER = 'Leiter QM'
     IU_EMPLOYEE = 'Mitarbeiter IU'
     QM_MANAGER = 'Mitarbeiter QM'
-
-
-def delete_file(path):
-    if os.path.exists(path):
-        os.remove(path)
