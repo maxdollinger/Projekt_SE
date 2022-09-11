@@ -46,18 +46,18 @@
 
         status.value = "{{ report.report_status }}";
 
-        if (status.value == 3) {
+        if (status.value == "3") {
             commentDiv.style.display = "flex";
             commentInput.setAttribute("required", true);
         }
 
         status.onchange = function() {
-            if (status.value == 3) {
+            if (status.value == "3") {
                 commentDiv.style.display = "flex";
                 commentInput.setAttribute("required", true);
             } else {
+                commentInput.removeAttribute("required");
                 commentDiv.style.display = "none";
-                commentInput.setAttribute("required", false);
             } 
         }
     </script>
