@@ -103,7 +103,7 @@ def reports_detail_view(request, id):
 
 def get_reports_role_based(user, role, filter):
     filters = {
-        'open': [1, 2, 3, 4, 5],
+        'open': [1, 2, 4, 5, 7],
         'all': [1, 2, 3, 4, 5, 6, 7],
     }
 
