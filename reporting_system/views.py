@@ -7,11 +7,9 @@ from reporting_system.forms.correction_report_form import CorrectionReportStuden
 from .models import CorrectionReport
 from django.shortcuts import render
 from django.shortcuts import redirect
-from django.contrib.auth import get_user
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .services import get_assignee_users, get_user_role, get_qm_users, role_is_valid, Roles, roles_are_valid,\
-    delete_file
+from .services import get_assignee_users, get_user_role, get_qm_users, Roles, roles_are_valid
 from django.contrib.auth.decorators import login_required
 import os
 from django.core.files.storage import default_storage
@@ -103,7 +101,7 @@ def reports_detail_view(request, id):
 
 def get_reports_role_based(user, role, filter):
     filters = {
-        'open': [1, 2, 3, 4, 5],
+        'open': [1, 2, 4, 5, 7],
         'all': [1, 2, 3, 4, 5, 6, 7],
     }
 
@@ -309,7 +307,6 @@ def delete_report(request, id):
             return redirect(reports_all_view)
 
         if confirmation_text == title:
-            delete_file(report.file.path)
             report.delete()
             messages.success(request, f"Die Korrekturmeldung {title} wurde erfolgreich gelöscht.")
             return redirect(reports_all_view)
