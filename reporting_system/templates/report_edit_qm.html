@@ -39,7 +39,7 @@
 
             <div class="mb-3 row" id="comment_input" style="display: none;">
                 <label for="comment" class="col-sm-2 col-form-label">{{ form.comment.label }}</label>
-                <div class="col-sm-10">
+                <div class="col-sm-10" id="comment_area_div">
                     {{ form.comment }}
                 </div>
             </div>
@@ -56,19 +56,30 @@
     const status = document.getElementById("id_report_status");
     const commentDiv = document.getElementById("comment_input");
     const commentInput = document.getElementById("id_comment");
+    commentInput.required = true;
+    const commentAreaDiv = document.getElementById("comment_area_div");
+
+    commentAreaDiv.removeChild(commentInput);
+
+    showComment = function () {
+        commentDiv.style.display = "flex";
+        commentAreaDiv.appendChild(commentInput);
+    }
+
+    hideComment = function () {
+        commentAreaDiv.removeChild(commentInput);
+        commentDiv.style.display = "none";
+    }
 
     if (status.value == 3) {
-        commentDiv.style.display = "flex";
-        commentInput.setAttribute("required", true);
+        showComment();
     }
 
     status.onchange = function () {
         if (status.value == 3) {
-            commentDiv.style.display = "flex";
-            commentInput.setAttribute("required", true);
+            showComment();
         } else {
-            commentDiv.style.display = "none";
-            commentInput.setAttribute("required", false);
+            hideComment();
         }
     }
 </script>
